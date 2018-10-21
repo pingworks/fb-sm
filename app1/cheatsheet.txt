@@ -1,0 +1,20 @@
+docker build -t app1:1.0 .
+docker run --rm -p8080:80 app1:1.0
+
+docker build -t app1:2.0 .
+docker run --rm -p8080:80 app1:2.0
+
+bash benchmark.sh
+
+kubectl create ns $(id)
+kubectl config set-context $(id) \
+  --cluster=minikube \
+  --namespace=$(id) \
+  --username=minikube
+kubectl conig use-context $(id)
+
+kubectl apply -f k8s/pod.yaml
+kubectl apply -f k8s/deployment.yaml
+kubectl apply -f k8s/service.yaml
+
+kubectl scale --replicas=3 deployment/app1
